@@ -47,7 +47,7 @@ To read the full brief and get some inspiration for this Exam click
 
 ## Data
 
-<b>Data and Exam 2 overview [video]()</b>
+<b>Data and Exam 2 overview [video](https://warpwire.duke.edu/w/-44DAA/)</b>
 
 In your repository is an Excel file `rural_veterans/data/rural_vets.xlsx`. 
 There are three tables in this file (one in each tab). Footnotes are available 
