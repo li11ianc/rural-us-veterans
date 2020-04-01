@@ -61,7 +61,9 @@ Table 3. Employment Characteristics for Working-Age Veterans, by State and
 The data is not in the nicest form for reading it directly into R. However, 
 you may manipulate the Excel file (or change to another file type) before you 
 read it into R. Save your modified file as `rural_vets_clean` in
-`rural_veterans/data/`.
+`rural_veterans/data/`. There are some functions (`readxl::read_xlsx()`) that 
+will read in Excel files, but you will still have some data cleaning to 
+then do in R.
    
 ## Tasks
 
