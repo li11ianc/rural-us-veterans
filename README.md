@@ -115,7 +115,7 @@ Modify this README.
 2. Remove all other text but the introduction and references sections and their
    respective text.
 
-3. Add a link to your app that you published in Task 2
+3. Add a link to your app that you published in Task 2.
 
 4. Add any other relevant information to this README that someone looking at
    your repo may be interested in knowing. This can be text or images.
