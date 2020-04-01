@@ -11,6 +11,7 @@ veterans, as well as from their rural neighbors, provides the necessary
 perspective for rural communities, government agencies, veterans’ advocates, 
 and other policymakers interested in directing programs and services to this 
 population.
+</br>
 
 The U.S. Department of Veterans Affairs (VA) has identified veterans living in 
 rural areas as a population of interest. To help address concerns of veterans’ 
@@ -20,6 +21,7 @@ the VA come only from rural veterans enrolled in their healthcare system, and
 not all veterans are enrolled. However, to anticipate demand for care, as well 
 as to understand what types of services may be requested or utilized, requires 
 data on all rural veterans.
+</br>
 
 [This brief](https://www.census.gov/content/dam/Census/library/publications/2017/acs/acs-36.pdf) 
 aims to answer the question “Who are rural veterans?” by considering 
