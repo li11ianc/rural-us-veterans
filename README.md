@@ -124,7 +124,7 @@ Modify this README.
 
 #### Deadline and submission
 
-**The deadline to submit Exam 2 is 11:59pm on Wednesday, April 8.** 
+**The deadline to submit Exam 2 is 11:59pm EST on Wednesday, April 8.** 
 Only the code in the master branch will be graded.
 
 #### Rules
