@@ -11,7 +11,7 @@ veterans, as well as from their rural neighbors, provides the necessary
 perspective for rural communities, government agencies, veterans’ advocates, 
 and other policymakers interested in directing programs and services to this 
 population.
-</br>
+</br></br>
 
 The U.S. Department of Veterans Affairs (VA) has identified veterans living in 
 rural areas as a population of interest. To help address concerns of veterans’ 
