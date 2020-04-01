@@ -38,7 +38,7 @@ REPORT NUMBER ACS-36
 </br>
 KELLY ANN HOLDER
 </b>
-
+</br></br>
 To read the full brief and get some inspiration for this Exam click
 [here](https://www.census.gov/content/dam/Census/library/publications/2017/acs/acs-36.pdf)
 
@@ -100,8 +100,6 @@ and/or reactive expressions for efficiency and a pleasant user experience).
 So, be creative and feel free to incorporate other data including spatial data. 
 Check out Shiny's [gallery](https://shiny.rstudio.com/gallery/) for inspiration.
 
-<br/>
-
 #### Task 2
 
 Publish your app on https://www.shinyapps.io/.
@@ -120,8 +118,6 @@ Modify this README.
 
 4. Add any other relevant information to this README that someone looking at
    your repo may be interested in knowing. This can be text or images.
-
-<br/>
 
 ## Essential details
 
@@ -169,9 +165,9 @@ efficiency and code style.
 
 **Topic**|**Points**
 ---------|----------:|
-Task 1   |  50
-Task 2   |   5
-Task 3   |   5
+Task 1   |  46
+Task 2   |   6
+Task 3   |   8
 **Total**|**60**
 
 *Apps that fail to run after minimal intervention will receive a 0*.
