@@ -38,9 +38,10 @@ REPORT NUMBER ACS-36
 </br>
 KELLY ANN HOLDER
 </b>
-</br></br>
-To read the full brief and get some inspiration for this Exam click
-[here](https://www.census.gov/content/dam/Census/library/publications/2017/acs/acs-36.pdf)
+</br>
+
+To read the full brief and get some inspiration for this Exam click 
+[here](https://www.census.gov/content/dam/Census/library/publications/2017/acs/acs-36.pdf).
 
 ## Data
 
