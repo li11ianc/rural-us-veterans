@@ -150,6 +150,9 @@ You will only have one branch to start with in your repository - master.
 You may create other branches as needed, but only your work in the master 
 branch will be graded. Be sure to push your work before the deadline.
 
+This repository does not contain an RStudio project. Hence, you will need to
+use git from the command line as opposed to the RStudio GUI.
+
 #### Academic integrity
 
 This is an individual assignment. See the Rules section above.
