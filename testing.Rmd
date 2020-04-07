@@ -44,6 +44,32 @@ borough_info <- c("BRONX; Population: 1,332,650; Number of SQF incidents: 135,72
 freq_sqf <- cbind(freq_sqf, borough_info)
 datamap <- inner_join(freq_sqf, nyc_map)
 
+To make interactive:
+
+library(plotly)
+data <- data %>%
+  arrange(pop) %>%
+  mutate( name=factor(name, unique(name))) %>%
+  mutate( mytext=paste(
+    "City: ", name, "\n", 
+    "Population: ", pop, sep="")
+  )
+
+p <- data %>%
+  ggplot() +
+    geom_polygon(data = UK, aes(x=long, y = lat, group = group), fill="grey", alpha=0.3) +
+    geom_point(aes(x=long, y=lat, size=pop, color=pop, text=mytext, alpha=pop) ) +
+    scale_size_continuous(range=c(1,15)) +
+    scale_color_viridis(option="inferno", trans="log" ) +
+    scale_alpha_continuous(trans="log") +
+    theme_void() +
+    ylim(50,59) +
+    coord_map() +
+    theme(legend.position = "none")
+ 
+p <- ggplotly(p, tooltip="text")
+p
+
 
 ```{r map-viz-all}
 # obtain map data of PA and some neighboring states
