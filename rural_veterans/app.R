@@ -15,6 +15,15 @@ theme_custom <- function() {
       plot.caption = element_text(size = 10))
 }
 
+vets <- read_csv("data/rural_vets_complete_clean.csv")
+
+center_coords <- lapply(state.center, unlist) %>%
+  bind_rows()
+
+center_coords$state <- sapply(state.name, paste0)
+
+vets_map <- inner_join(vets, center_coords, by = "state")
+
 
 ui <- fluidPage(theme = shinytheme("yeti"),
                 textInput(inputId = "demo",
