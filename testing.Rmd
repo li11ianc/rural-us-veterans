@@ -9,7 +9,55 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
 ```{r}
 library(tidyverse)
+library(sf)
+library(ggiraph)
+library(maps)
+library(viridis)
+```
+library(patchwork)
+library(RColorBrewer)
 
+```{r}
+vets <- read_csv("rural_veterans/data/rural_vets_complete_clean.csv")
+```
+
+
+```{r join-state-data-and-map, warning=FALSE, echo=FALSE}
+center_coords <- lapply(state.center, unlist) %>%
+  bind_rows()
+
+center_coords$state <- sapply(state.name, paste0)
+
+vets_map <- inner_join(vets, center_coords, by = "state")
+
+rural_map <- vets_map %>%
+  filter(rural_urban == "Rural", state != "Alaska", state != "Hawaii")
+
+urban_map <- vets_map %>%
+  filter(rural_urban == "Urban", state != "Alaska", state != "Hawaii")
+```
+
+borough_info <- c("BRONX; Population: 1,332,650; Number of SQF incidents: 135,724", "BROOKLYN; Population: 2,465,326; Number of SQF incidents: 228,354", "MANHATTAN; Population: 1,537,195; Number of SQF incidents: 140,913", "QUEENS; Population: 2,229,379; Number of SQF incidents: 152,681", "STATEN ISLAND; Population: 443,728; Number of SQF incidents: 28,052")
+freq_sqf <- cbind(freq_sqf, borough_info)
+datamap <- inner_join(freq_sqf, nyc_map)
+
+
+```{r map-viz-all}
+# obtain map data of PA and some neighboring states
+us_map <- map_data("state")
+
+# create visualization
+cols <- c("Rural" = "#F4200B", "Urban" = "#F4D03F", "Total" = "#8E44AD")
+
+ggplot() + 
+  geom_polygon(data = us_map, aes(x=long, y=lat, group=group),
+                color="#85C1E9", fill = "#EBF5FB") +
+  geom_point(data = urban_map, aes(x = x, y = y, size = total, color = rural_urban, alpha = .7)) +
+  geom_point(data = rural_map, aes(x = x, y = y, size = total, color = rural_urban, alpha = .7)) +
+  scale_size_continuous(range=c(1,15)) +
+  scale_color_manual(values = cols) +
+  coord_map()
 ```
