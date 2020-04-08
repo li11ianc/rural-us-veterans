@@ -3,8 +3,8 @@ library(tidyverse)
 library(maps)
 library(shinythemes)
 library(mapproj)
-library(shinyalert)
 
+# Make custom theme for plots
 theme_custom <- function() {
   theme_light() +
   theme(plot.title = element_text(color = "white", size = 24, face = "bold", hjust = .5),
@@ -24,21 +24,26 @@ theme_custom <- function() {
           legend.text = element_text(color = "white"))
 }
 
+# Load data
 vets <- read_csv("data/rural_vets_complete_clean.csv")
-cols <- c("Rural" = "#F4200B", "Urban" = "#2C0A90", "Total" = "#F4D03F",
-          "West" = "#E67E22", "Midwest" = "#F1C40F", "Northeast" = "#C0392B", 
-          "South" = "#2980B9")
-cols2 <- c("Rural" = "white", "Urban" = "black")
+
+# Set fill values for later plotting
+cols <- c("Rural" = "#F4200B", "Urban" = "#2C0A90", "Total" = "#F4D03F", "West" = "#E67E22", 
+          "Midwest" = "#F1C40F", "Northeast" = "#C0392B", "South" = "#2980B9")
+
+# Load map data
 us_map <- map_data("state")
 
+# UI
 ui <- fluidPage(theme = shinytheme("superhero"),
                 navbarPage(title = "Rural U.S. Veterans",
                            tabPanel("Federal",
                                     sidebarLayout(
                                       sidebarPanel(
                                         h2("Where are America's rural veterans?"),
-                                        h4("Explore geographic patterns and compare urban and rural distributions"),
-                                        checkboxGroupInput(inputId = "checkbox_tru",
+                                        h4("Explore geographic patterns and compare urban and 
+                                           rural distributions"),
+                                        checkboxGroupInput(inputId = "checkbox_ru",
                                                   label   = "Select which veterans to display:",
                                                   choices = list("Rural", "Urban"),
                                                   selected = "Rural",
@@ -62,20 +67,24 @@ ui <- fluidPage(theme = shinytheme("superhero"),
                                         tags$head(tags$style("#note_text{color: white;
                                                               font-size: 16px;
                                                               font-style: italic;
-                                                              }")
-                                        )
-                                      ),
+                                                              }"))
+                                        ),
                                      mainPanel(
                                        fluidRow(
-                                         plotOutput(outputId = "usvets_map", width = "925px", 
-                                                  height = "504.6px")),
-                                       br(),
+                                          plotOutput(outputId = "usvets_map", 
+                                                     width = "925px",
+                                                     height = "504.6px"),
+                                          br()
+                                        ),
                                        fluidRow(
-                                       plotOutput(outputId = "poverty_plot", width = "800px",
-                                                  height = "400px"), align = "center"),
-                                       br()
+                                          plotOutput(outputId = "charac_plot", 
+                                                     width = "800px",
+                                                     height = "400px"), 
+                                          br(),
+                                          align = "center"),
+                                      )
                                     )
-                                    )),
+                                ),
                            tabPanel("State",
                                     fluidRow(
                                         column(width = 3,
@@ -84,7 +93,8 @@ ui <- fluidPage(theme = shinytheme("superhero"),
                                                     label = "Choose a state",
                                                     choices = state.name,
                                                     selected = "Alaska"),
-                                        br()),
+                                        br()
+                                        ),
                                         column(width = 6,
                                                br(),
                                                br(),
@@ -94,81 +104,107 @@ ui <- fluidPage(theme = shinytheme("superhero"),
                                         p(
                                           textOutput(outputId = "state_rural_text1", inline = TRUE),
                                           textOutput(outputId = "state_rural_text2", inline = TRUE)),
-                                        tags$head(tags$style("#state_rural_text1{color: red;
+                                          tags$head(tags$style("#state_rural_text1{color: red;
                                                               font-size: 24px;
                                                               font-style: bold;
                                                               }")),
-                                        br())
-                                        ),
+                                        br()
+                                        )
+                                      ),
                                     fluidRow(
                                       column(width = 4, 
                                              plotOutput(outputId = "state_disability_plot"),
                                              br(),
                                              p(
                                                textOutput(outputId = "state_disability_text1", inline = TRUE),
-                                               textOutput(outputId = "state_disability_text2", inline = TRUE)),
+                                               textOutput(outputId = "state_disability_text2", inline = TRUE)
+                                               ),
                                              tags$head(tags$style("#state_disability_text1{color: red;
                                                               font-size: 24px;
                                                               font-style: bold;
-                                                              }"))),
+                                                              }"))
+                                             ),
                                       column(width = 4,
                                             plotOutput(outputId = "state_insurance_plot"),
                                             br(),
                                             p(
                                               textOutput(outputId = "state_insurance_text1", inline = TRUE),
-                                              textOutput(outputId = "state_insurance_text2", inline = TRUE)),
+                                              textOutput(outputId = "state_insurance_text2", inline = TRUE)
+                                              ),
                                             tags$head(tags$style("#state_insurance_text1{color: red;
                                                               font-size: 24px;
                                                               font-style: bold;
-                                                              }"))),
+                                                              }"))
+                                            ),
                                       column(width = 4, 
                                         plotOutput(outputId = "state_poverty_plot"),
                                         br(),
                                         p(
                                           textOutput(outputId = "state_poverty_text1", inline = TRUE),
-                                          textOutput(outputId = "state_poverty_text2", inline = TRUE)),
+                                          textOutput(outputId = "state_poverty_text2", inline = TRUE)
+                                          ),
                                         tags$head(tags$style("#state_poverty_text1{color: red;
                                                               font-size: 24px;
                                                               font-style: bold;
-                                                              }"))),
-                                                       )
+                                                              }"))
+                                        ),
+                                      )
                                     ),
                            tabPanel("Customized Search", 
                                     fluidRow(column(width = 2, 
-                                                    br(),
-                                                    h4("Find states where over")),
+                                                br(),
+                                                h4("Find states where over")
+                                             ),
                                              column(width = 2,
-                                             sliderInput(inputId = "search_percent",
-                                                         label = "Select percent",
-                                                       min = 0, max = 100, value = 1),
-                                             style = "background-color:white; color:black"
+                                               sliderInput(inputId = "search_percent",
+                                                           label = "Select percent",
+                                                         min = 0, max = 100, value = 1),
+                                               style = "background-color:white; color:black"
+                                             ),
+                                             column(width = 1,
+                                               br(),
+                                               h4("% of")
+                                             ),
+                                             column(width = 2,
+                                               selectInput(inputId = "search_ru",
+                                                           label = "Choose geography",
+                                                           choices = list("all" = "Total", 
+                                                                          "urban" = "Urban", 
+                                                                          "rural" = "Rural")
+                                                           )
+                                             ),
+                                             column(width = 1,
+                                                br(),
+                                                h4("veterans")
+                                             ),
+                                             column(width = 3,
+                                               selectInput(inputId = "search_charac",
+                                                           label = "Choose a characteristic",
+                                                           choices = list("are without health insurance" = "uninsured",
+                                                                          "live with a service-connected disability" = "with_disability",
+                                                                          "are in poverty" = "in_poverty", 
+                                                                          "are unemployed" = "unemployed")
+                                                           )
                                              ),
                                              column(width = 1,
                                                     br(),
-                                             h4("% of ")),
-                                             column(width = 2,
-                                             selectInput(inputId = "search_ru",
-                                                         label = "Choose geography",
-                                                         choices = list("all" = "Total", 
-                                                                        "urban" = "Urban", 
-                                                                        "rural" = "Rural"))),
-                                             column(width = 2,
-                                                    br(),
-                                             h4("veterans are")),
-                                             column(width = 2,
-                                             selectInput(inputId = "search_charac",
-                                                         label = "Choose a characteristic",
-                                                         choices = list("without health insurance" = "uninsured",
-                                                                        "living with a service-connected disability" = "with_disability",
-                                                                        "in poverty" = "in_poverty", 
-                                                                        "unemployed" = "unemployed")))),
-                                             fluidRow(
+                                                    actionButton(inputId = "go_button", label = "Go")
+                                             )
+                                       ),
+                                       fluidRow(
                                                h3("Search results"),
+                                               textOutput(outputId = "search_text"),
+                                               tags$head(tags$style("#search_text{color: white;
+                                                              font-size: 16px;
+                                                              font-style: italic;
+                                                              }")),
                                                hr(),
                                                column(width = 12,
                                                       DT::dataTableOutput(outputId = "search_results"),
                                                       style = "background-color:white; color:black"
-                                                      ))),
+                                                      )
+                                               )
+                            ),
                            tabPanel("Background",
                                     column(width = 2),
                                     column(width = 8,
@@ -193,31 +229,36 @@ ui <- fluidPage(theme = shinytheme("superhero"),
                                            p("https://www.ruralhealthinfo.org/toolkits/disabilities/1/barriers"),
                                            p("Data Source: U.S. Census Bureau, 2011-2015 American Community Survey, 5-year estimates."),
                                            p("For more information about ACS, see www.census.gov/programs-surveys/acs/")
-                                    ))
-                           
-                           ))
+                                      )
+                                    )
+                           )
+                )
 
-
+# Server
 server <- function(input, output) {
+
+# For federal tab
+  # US map of veteran locations
+  
+  vets_filt <- eventReactive(input$checkbox_ru,{
+    vets %>%
+      filter(rural_urban %in% input$checkbox_ru)
+  })
   
   output$usvets_map <- renderPlot({
     
-    x_map <- vets %>%
-      filter(rural_urban %in% input$checkbox_tru, state != "Alaska", state != "Hawaii") %>%
-      mutate(rural_urban = fct_relevel(rural_urban, c("Total", "Urban", "Rural")))
-    
-    # create visualization
-  
-    ggplot() + 
+    vets_filt() %>%
+      filter(state != "Alaska", state != "Hawaii") %>%
+      ggplot() +
       geom_polygon(data = us_map, aes(x=long, y=lat, group=group),
-                   color="#85C1E9", fill = "#EBF5FB") +
-      geom_point(data = x_map, aes(x = center_lat, y = center_long, size = total, 
+                       color="#85C1E9", fill = "#EBF5FB") +
+      geom_point(aes(x = center_lat, y = center_long, size = total, 
                                    color = rural_urban, alpha = .7)) +
       scale_size_continuous(range=c(1,30), guide = FALSE) +
       scale_color_manual(values = cols, name = "Urban/Rural") +
       scale_alpha_continuous(guide = FALSE) +
       coord_map() +
-      labs(title = paste0(paste0(input$checkbox_tru, collapse = " and "), 
+      labs(title = paste0(paste0(input$checkbox_ru, collapse = " and "), 
                           " Veterans in the US, by State"), subtitle = "2011-2015") +
       theme_custom() +
       theme(plot.title = element_text(color = "white", size = 22, face = "bold", hjust = .5),
@@ -231,22 +272,23 @@ server <- function(input, output) {
             panel.grid.major=element_blank(),
             panel.grid.minor=element_blank())
     
-    
   })
-  output$poverty_plot <- renderPlot({
-    vets %>%
-    filter(rural_urban %in% input$checkbox_tru) %>%
+  
+  # Plot of selected characteristic for all 50 states, colored by region
+  output$charac_plot <- renderPlot({
+    vets_filt() %>%
     ggplot(aes_string(x = paste0("reorder(state, -", input$select_charac, ")"), 
                       y = input$select_charac, fill = "region")) +
     geom_bar(stat = "identity") +
     scale_fill_manual(values = cols, name = "Region") +
     theme_custom() +
     theme(axis.text.x = element_text(color = "white", size = 9, angle = 70, hjust = 1)) +
-    labs(title = paste0(paste0(input$checkbox_tru, collapse = " and "), " Veterans Living ", 
+    labs(title = paste0(paste0(input$checkbox_ru, collapse = " and "), " Veterans Living ", 
       str_to_title(str_replace_all(input$select_charac, "_", " "))),
       y = paste0("Percent ", str_replace_all(input$select_charac, "_", " ")), x = "State")
   })
   
+  # Footnotes on selected characteristic
   output$note_text <- renderText({
     if (input$select_charac == "in_poverty"){
       paste("For some persons, such as unrelated individuals under age 15, poverty status is not 
@@ -278,15 +320,16 @@ server <- function(input, output) {
     }
   })
   
-  # For state tab
+# For state tab
   
+  x_state1 <- eventReactive(input$select_state, {
+    vets %>%
+      filter(state == input$select_state, rural_urban != "Total")
+  })
+  
+  # Plot of percent with disability
   output$state_disability_plot <- renderPlot({
-    
-    x_state <- vets %>%
-      filter(state == input$select_state)
-    
-    x_state %>%
-      filter(rural_urban != "Total") %>%
+    x_state1() %>%
       ggplot(aes(x = rural_urban, y = with_disability, fill = rural_urban)) +
       scale_fill_manual(values = cols) +
       geom_bar(stat = "identity") +
@@ -297,12 +340,9 @@ server <- function(input, output) {
            service-connected disability")
   })
   
+  # Plot of percent uninsured
   output$state_insurance_plot <- renderPlot({
-    x_state <- vets %>%
-      filter(state == input$select_state)
-    
-    x_state %>%
-      filter(rural_urban != "Total") %>%
+    x_state1() %>%
       ggplot(aes(x = rural_urban, y = uninsured, fill = rural_urban)) +
       scale_fill_manual(values = cols) +
       geom_bar(stat = "identity") +
@@ -312,12 +352,9 @@ server <- function(input, output) {
       labs(title = paste0("Uninsured Vets in ", input$select_state), y = "Percent uninsured")
   })
   
+  # Plot of percent in poverty
   output$state_poverty_plot <- renderPlot({
-    x_state <- vets %>%
-      filter(state == input$select_state)
-    
-    x_state %>%
-      filter(rural_urban != "Total") %>%
+    x_state1() %>%
       ggplot(aes(x = rural_urban, y = in_poverty, fill = rural_urban)) +
       scale_fill_manual(values = cols) +
       geom_bar(stat = "identity") +
@@ -327,9 +364,14 @@ server <- function(input, output) {
       labs(title = paste0("Impoverished Vets in ", input$select_state), y = "Percent in poverty")
   })
   
+  x_state2 <- eventReactive(input$select_state, {
+    vets %>%
+      filter(state == input$select_state)
+  })
+  
+  # Disability subtitle pt. 1
   output$state_disability_text1 <- renderText({
-      x_state <- vets %>%
-        filter(state == input$select_state)
+      x_state <- x_state2()
     
       percent_disabled <- (x_state[which(x_state$rural_urban == "Rural"),]$total * 
                              x_state[which(x_state$rural_urban == "Rural"),]$with_disability / 100 / 
@@ -341,14 +383,15 @@ server <- function(input, output) {
     
   })
   
+  # Disability subtitle pt. 2
   output$state_disability_text2 <- renderText({
     paste0(" of ", input$select_state, "'s diabled veterans live in rural areas.")
     
   })
   
+  # Insurance subtitle pt. 1
   output$state_insurance_text1 <- renderText({
-    x_state <- vets %>%
-      filter(state == input$select_state)
+    x_state <- x_state2()
     
     percent_uninsured <- (x_state[which(x_state$rural_urban == "Rural"),]$total * 
                            x_state[which(x_state$rural_urban == "Rural"),]$uninsured / 100 / 
@@ -360,13 +403,14 @@ server <- function(input, output) {
     
   })
   
+  # Insurance subtitle pt. 2
   output$state_insurance_text2 <- renderText({
       paste0(" of ", input$select_state, "'s uninsured veterans live in rural areas.")
   })
   
+  # Poverty subtitle pt. 1
   output$state_poverty_text1 <- renderText({
-    x_state <- vets %>%
-      filter(state == input$select_state)
+    x_state <- x_state2()
     
     percent_poverty <- (x_state[which(x_state$rural_urban == "Rural"),]$total * 
                            x_state[which(x_state$rural_urban == "Rural"),]$in_poverty / 100 / 
@@ -378,13 +422,14 @@ server <- function(input, output) {
     
   })
   
+  # Poverty subtitle pt. 2
   output$state_poverty_text2 <- renderText({
     paste0(" of ", input$select_state, "'s impoverished veterans live in rural areas.")
   })
   
+  # Overall state subtitle pt. 1
   output$state_rural_text1 <- renderText({
-    x_state <- vets %>%
-      filter(state == input$select_state)
+    x_state <- x_state2()
     
     percent_rural <- (x_state[which(x_state$rural_urban == "Rural"),]$total / 
                           x_state[which(x_state$rural_urban == "Total"),]$total ) * 100
@@ -393,29 +438,46 @@ server <- function(input, output) {
     
   })
   
+  # Overall state subtitle pt. 2
   output$state_rural_text2 <- renderText({
     paste0(" of ", input$select_state, "'s veterans live in rural areas.")
   })
   
-  output$search_results <- DT::renderDataTable({
-    table <- vets %>%
-      filter(rural_urban == input$search_ru, get(input$search_charac) > input$search_percent) %>%
-      select(state, total, in_poverty, unemployed, uninsured, with_disability) %>%
-      arrange(desc(get(input$search_charac)))
-    
-    table <- subset(table, select=c(1:2, get(input$search_charac), 3:6))
-    
-    table <- table %>%
-      subset(select=which(!duplicated(names(.)))) 
-    
-    table <- table %>%
-      rename("State" = state, "Veteran Population" = total, "% Uninsured" = uninsured, 
-             "% in Poverty" = in_poverty, "% Unemployed" = unemployed, 
-             "% With VA Disability" = with_disability)
-    table
+# For customized search tab
+  
+  # Search will only be performed once action button is hit
+  react_table <- eventReactive(input$go_button, {
+       table <- vets %>%
+         filter(rural_urban == input$search_ru, get(input$search_charac) > input$search_percent) %>%
+         select(state, total, in_poverty, unemployed, uninsured, with_disability) %>%
+         arrange(desc(get(input$search_charac)))
+       
+       table <- subset(table, select=c(1:2, get(input$search_charac), 3:6))
+       
+       table <- table %>%
+         subset(select=which(!duplicated(names(.)))) 
+       
+       table %>%
+         rename("State" = state, "Veteran Population" = total, "% Uninsured" = uninsured, 
+                "% in Poverty" = in_poverty, "% Unemployed" = unemployed, 
+                "% With VA Disability" = with_disability)
   })
   
+  # Search description
+  react_text <- eventReactive(input$go_button, {
+      paste0("Showing states where over ", input$search_percent, "% of ", 
+             str_to_lower(str_replace(input$search_ru, "Total", "All")), " veterans are ",
+             str_replace_all(input$search_charac, "_", " "))
+    })
+  
+  output$search_results <- DT::renderDataTable({
+      react_table()
+  })
+  
+  output$search_text <- renderText({
+        react_text()
+      })
 }
 
-
+# Run app
 shinyApp(ui = ui, server = server)
