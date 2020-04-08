@@ -12,151 +12,15 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(tidyverse)
-library(sf)
-library(ggiraph)
 library(maps)
-library(plotly)
 ```
-library(patchwork)
-library(RColorBrewer)
+
 
 ```{r}
 vets <- read_csv("rural_veterans/data/rural_vets_complete_clean.csv")
 ```
 
 
-```{r join-state-data-and-map, warning=FALSE, echo=FALSE}
-center_coords <- lapply(state.center, unlist) %>%
-  bind_rows()
-
-center_coords$state <- sapply(state.name, paste0)
-
-vets_map <- inner_join(vets, center_coords, by = "state")
-
-rural_map <- vets_map %>%
-  filter(rural_urban == "Rural", state != "Alaska", state != "Hawaii")
-
-urban_map <- vets_map %>%
-  filter(rural_urban == "Urban", state != "Alaska", state != "Hawaii")
-```
-
-borough_info <- c("BRONX; Population: 1,332,650; Number of SQF incidents: 135,724", "BROOKLYN; Population: 2,465,326; Number of SQF incidents: 228,354", "MANHATTAN; Population: 1,537,195; Number of SQF incidents: 140,913", "QUEENS; Population: 2,229,379; Number of SQF incidents: 152,681", "STATEN ISLAND; Population: 443,728; Number of SQF incidents: 28,052")
-freq_sqf <- cbind(freq_sqf, borough_info)
-datamap <- inner_join(freq_sqf, nyc_map)
-
-To make interactive:
-
-library(plotly)
-data <- data %>%
-  arrange(pop) %>%
-  mutate( name=factor(name, unique(name))) %>%
-  mutate( mytext=paste(
-    "City: ", name, "\n", 
-    "Population: ", pop, sep="")
-  )
-
-p <- data %>%
-  ggplot() +
-    geom_polygon(data = UK, aes(x=long, y = lat, group = group), fill="grey", alpha=0.3) +
-    geom_point(aes(x=long, y=lat, size=pop, color=pop, text=mytext, alpha=pop) ) +
-    scale_size_continuous(range=c(1,15)) +
-    scale_color_viridis(option="inferno", trans="log" ) +
-    scale_alpha_continuous(trans="log") +
-    theme_void() +
-    ylim(50,59) +
-    coord_map() +
-    theme(legend.position = "none")
- 
-p <- ggplotly(p, tooltip="text")
-p
-
-
-```{r map-viz-all}
-# obtain map data of PA and some neighboring states
-us_map <- map_data("state")
-
-# create visualization
-cols <- c("Rural" = "#F4200B", "Urban" = "#2C0A90", "Total" = "#F4D03F",
-          "West" = "#E67E22", "Midwest" = "#F1C40F", "Northeast" = "#C0392B", 
-          "South" = "#2980B9")
-```
-
-```{r}
-# Reorder data + Add a new column with tooltip text
-vets_map <- vets_map %>%
-  mutate(rural_urban = fct_relevel(rural_urban, c("Total", "Urban", "Rural"))) %>%
-  mutate(state = factor(state, unique(state))) %>%
-  mutate(caption = paste(
-    state, "\n", 
-    "Population: ", total, sep="")
-  )
-
-p <- ggplot() + 
-  geom_polygon(data = us_map, aes(x=long, y=lat, group=group),
-                color="#85C1E9", fill = "#EBF5FB") +
-  geom_point(data = vets_map, aes(x = x, y = y, size = total, color = rural_urban, alpha = .7,
-                                   text = caption)) +
-  scale_size_continuous(range=c(1,15)) +
-  scale_color_manual(values = cols) +
-  coord_map()
-
-p <- ggplotly(p, tootltip = "text")
-p
-```
-
-```{r}
-vets %>%
-  filter(rural_urban == "Rural") %>%
-  ggplot(aes_string(x = "reorder(state, -in_poverty)", y = "in_poverty", fill = "region")) +
-  geom_bar(stat = "identity") +
-  scale_fill_manual(values = cols, name = "Region") +
-  theme_light() +
-  theme(plot.title = element_text(color = "#1A5276", size = 18, face = "bold"),
-      axis.title.x = element_text(color = "#1A5276", size = 11, face = "bold"),
-      axis.title.y = element_text(color = "#1A5276", size = 11, face = "bold"),
-      axis.text.x = element_text(color = "gray45", size = 7, angle = 70, hjust = 1),
-      axis.ticks = element_blank(),
-      legend.title = element_text(color = "#1A5276", size = 11, face = "bold"))+
-  labs(title = "Rural Veterans Living in Poverty", y = "Percent in poverty", x = "State")
-```
-
-```{r}
-state_input <- "Alaska"
-
-x_state <- vets %>%
-  filter(state == state_input)
-
-percent_disabled <- x_state[which(x_state$rural_urban == "Rural"),]$total * x_state[which(x_state$rural_urban == "Rural"),]$with_disability / 100 / (x_state[which(x_state$rural_urban == "Total"),]$total * x_state[which(x_state$rural_urban == "Total"),]$with_disability / 100) * 100
-
-paste0(round(percent_disabled, 2), "% of ", state_input, "'s diabled veterans live in rural areas")
-
-x_state %>%
-  filter(rural_urban != "Total") %>%
-  ggplot(aes(x = rural_urban, y = with_disability, fill = rural_urban)) +
-    scale_fill_manual(values = cols) +
-    geom_bar(stat = "identity")
-
-x_state %>%
-  filter(rural_urban != "Total") %>%
-  ggplot(aes(x = rural_urban, y = uninsured, fill = rural_urban)) +
-    scale_fill_manual(values = cols) +
-    geom_bar(stat = "identity")
-
-percent_uninsured <- x_state[which(x_state$rural_urban == "Rural"),]$total * x_state[which(x_state$rural_urban == "Rural"),]$uninsured / 100 / (x_state[which(x_state$rural_urban == "Total"),]$total * x_state[which(x_state$rural_urban == "Total"),]$uninsured / 100) * 100
-
-paste0(round(percent_uninsured, 2), "% of ", state_input, "'s uninsured veterans live in rural areas")
-
-x_state %>%
-  filter(rural_urban != "Total") %>%
-  ggplot(aes(x = rural_urban, y = in_poverty, fill = rural_urban)) +
-    scale_fill_manual(values = cols) +
-    geom_bar(stat = "identity") +
-  scale_y_continuous(limits= c(0, NA), expand = c(0,.2))
-
-percent_poverty <- x_state[which(x_state$rural_urban == "Rural"),]$total * x_state[which(x_state$rural_urban == "Rural"),]$in_poverty / 100 / (x_state[which(x_state$rural_urban == "Total"),]$total * x_state[which(x_state$rural_urban == "Total"),]$in_poverty / 100) * 100
-
-paste0(round(percent_poverty, 2), "% of ", state_input, "'s impoverished veterans live in rural areas ")
-```
 
 ```{r}
 input_search_ru <- "Rural"
@@ -179,9 +43,3 @@ table <- table %>%
   "% With VA Disability" = with_disability)
 
 ```
-
-References 
-
-https://stackoverflow.com/questions/48219732/pass-a-string-as-variable-name-in-dplyrfilter
-http://www.sthda.com/english/wiki/reordering-data-frame-columns-in-r#reorder-column-by-name
-https://stackoverflow.com/questions/24142942/how-to-remove-duplicated-column-names-in-r

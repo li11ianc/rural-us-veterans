@@ -68,6 +68,16 @@ Finally, the app's background section also provides context for why rural/urban 
 
 ## References
 
+### Code
+
+https://stackoverflow.com/questions/48219732/pass-a-string-as-variable-name-in-dplyrfilter
+
+http://www.sthda.com/english/wiki/reordering-data-frame-columns-in-r#reorder-column-by-name
+
+https://stackoverflow.com/questions/24142942/how-to-remove-duplicated-column-names-in-r
+
+### Data
+
 - Bureau, U. (2018). Veterans in Rural America: 2011–2015. The United States 
   Census Bureau. Retrieved 20 March 2020, 
   from https://www.census.gov/library/publications/2017/acs/acs-36.html
