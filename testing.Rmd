@@ -158,3 +158,30 @@ percent_poverty <- x_state[which(x_state$rural_urban == "Rural"),]$total * x_sta
 paste0(round(percent_poverty, 2), "% of ", state_input, "'s impoverished veterans live in rural areas ")
 ```
 
+```{r}
+input_search_ru <- "Rural"
+input_search_percent <- 7
+input_search_charac <- "uninsured"
+
+table <- vets %>%
+  filter(rural_urban == input_search_ru, get(input_search_charac) > input_search_percent) %>%
+  select(state, total, in_poverty, unemployed, uninsured, with_disability) %>%
+  arrange(desc(get(input_search_charac)))
+
+table <- subset(table, select=c(1:2, get(input_search_charac), 3:6))
+  
+table <- table %>%
+  subset(select=which(!duplicated(names(.)))) 
+
+table <- table %>%
+  rename("State" = state, "Veteran Population" = total, "% Uninsured" = uninsured, 
+  "% in Poverty" = in_poverty, "% Unemployed" = unemployed, 
+  "% With VA Disability" = with_disability)
+
+```
+
+References 
+
+https://stackoverflow.com/questions/48219732/pass-a-string-as-variable-name-in-dplyrfilter
+http://www.sthda.com/english/wiki/reordering-data-frame-columns-in-r#reorder-column-by-name
+https://stackoverflow.com/questions/24142942/how-to-remove-duplicated-column-names-in-r

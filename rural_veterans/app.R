@@ -7,19 +7,19 @@ library(mapproj)
 theme_custom <- function() {
   theme_light() +
   theme(plot.title = element_text(color = "white", size = 24, face = "bold", hjust = .5),
+        plot.subtitle = element_text(color = "white", size = 15, hjust = .5),
           axis.title.x = element_text(color = "white", size = 15, face = "bold"),
           axis.title.y = element_text(color = "white", size = 15, face = "bold"),
           axis.text.x = element_text(color = "white", size = 15, face = "bold"),
           axis.text.y = element_text(color = "white"),
           axis.ticks = element_blank(),
           legend.title = element_text(color = "white", size = 11, face = "bold"),
-          panel.background = element_rect(fill = "#4A5D6D", color = "#EBF5FB"),
+          panel.background = element_rect(fill = "#4A5D6D", color = "#4A5D6D"),
           panel.border=element_blank(),
           panel.grid.major=element_blank(),
           panel.grid.minor=element_blank(),
           plot.background=element_rect(fill = "#4A5D6D", color = "#4A5D6D"),
-          legend.background = element_rect(fill="#4A5D6D", 
-                                           size=0.5, linetype="solid"),
+          legend.background = element_rect(fill="#4A5D6D",size=0.5, linetype="solid"),
           legend.text = element_text(color = "white"))
 }
 
@@ -32,13 +32,11 @@ us_map <- map_data("state")
 
 ui <- fluidPage(theme = shinytheme("superhero"),
                 navbarPage(title = "Rural U.S. Veterans",
-                           tabPanel("National",
+                           tabPanel("Federal",
                                     sidebarLayout(
                                       sidebarPanel(
                                         h2("Where are America's rural veterans?"),
-                                        br(),
-                                        h4("Title text whoop"),
-                                        br(),
+                                        h4("Explore geographic patterns and compare urban and rural distributions"),
                                         checkboxGroupInput(inputId = "checkbox_tru",
                                                   label   = "Select which veterans to display:",
                                                   choices = list("Rural", "Urban"),
@@ -46,18 +44,21 @@ ui <- fluidPage(theme = shinytheme("superhero"),
                                                   inline = TRUE),
                                         br(),
                                         br(),
+                                        h2("What challenges do these veterans face?"),
+                                        h4("Explore regional and state level differences"),
                                         radioButtons(inputId = "select_charac",
                                                     label = "Select characteristic of interest:",
-                                                    choices = list("Poverty" = "in_poverty", 
-                                                                   "Unemployment" = "unemployed",
-                                                                   "Insurance" = "uninsured",
-                                                                   "Disability" = "with_disability"
-                                                                   )),
+                                                    choices = list("Insurance" = "uninsured",
+                                                                   "Disability" = "with_disability",
+                                                                   "Poverty" = "in_poverty", 
+                                                                   "Unemployment" = "unemployed"
+                                                                   ),
+                                                    select = "uninsured"),
                                         br(),
                                         h4("Notes"),
                                         textOutput(outputId = "note_text"),
                                         tags$head(tags$style("#note_text{color: white;
-                                                              font-size: 12px;
+                                                              font-size: 16px;
                                                               font-style: italic;
                                                               }")
                                         )
@@ -65,7 +66,7 @@ ui <- fluidPage(theme = shinytheme("superhero"),
                                      mainPanel(
                                        fluidRow(
                                          plotOutput(outputId = "usvets_map", width = "925px", 
-                                                  height = "550px")),
+                                                  height = "504px")),
                                        br(),
                                        fluidRow(
                                        plotOutput(outputId = "poverty_plot", width = "800px",
@@ -73,18 +74,6 @@ ui <- fluidPage(theme = shinytheme("superhero"),
                                        br()
                                     )
                                     )),
-                           tabPanel("Regional",
-                                    sidebarLayout(
-                                      sidebarPanel(
-                                        h3("Explore regional data"),
-                                        selectInput(inputId = "select_region",
-                                                    label = "Choose a region to explore",
-                                                    choices = list("Northeast", "West", "South",
-                                                                   "Midwest")),
-                                      ),
-                                      mainPanel()
-                                    )
-                           ),
                            tabPanel("State",
                                     fluidRow(
                                         column(width = 3,
@@ -142,6 +131,37 @@ ui <- fluidPage(theme = shinytheme("superhero"),
                                                               }"))),
                                                        )
                                     ),
+                           tabPanel("Customized Search", 
+                                    fluidRow(column(width = 2, 
+                                                    br(),
+                                                    h4("Find states where over")),
+                                             column(width = 2,
+                                             textInput(inputId = "search_percent",
+                                                       label = "Enter a number between 0 and 100",
+                                                       value = 6)),
+                                             column(width = 1,
+                                                    br(),
+                                             h4("% of ")),
+                                             column(width = 2,
+                                             selectInput(inputId = "search_ru",
+                                                         label = "Choose geography",
+                                                         choices = list("all" = "Total", 
+                                                                        "urban" = "Urban", 
+                                                                        "rural" = "Rural"))),
+                                             column(width = 2,
+                                                    br(),
+                                             h4("veterans are")),
+                                             column(width = 2,
+                                             selectInput(inputId = "search_charac",
+                                                         label = "Choose a characteristic",
+                                                         choices = list("without health insurance" = "uninsured",
+                                                                        "living with a service-connected disability" = "with_disability",
+                                                                        "in poverty" = "in_poverty", 
+                                                                        "unemployed" = "unemployed"))),
+                                             fluidRow(
+                                             DT::dataTableOutput(outputId = "search_results"),
+                                             tags$head(tags$style("#search_results{color: black}")
+                                             )))),
                            tabPanel("Background",
                                     column(width = 2),
                                     column(width = 8,
@@ -170,25 +190,23 @@ server <- function(input, output) {
                    color="#85C1E9", fill = "#EBF5FB") +
       geom_point(data = x_map, aes(x = center_lat, y = center_long, size = total, 
                                    color = rural_urban, alpha = .7)) +
-      scale_size_continuous(range=c(1,30)) +
-      scale_color_manual(values = cols) +
+      scale_size_continuous(range=c(1,30), guide = FALSE) +
+      scale_color_manual(values = cols, name = "Urban/Rural") +
+      scale_alpha_continuous(guide = FALSE) +
       coord_map() +
       labs(title = paste0(paste0(input$checkbox_tru, collapse = " and "), 
                           " Veterans in the US, by State"), subtitle = "2011-2015") +
+      theme_custom() +
       theme(plot.title = element_text(color = "white", size = 22, face = "bold", hjust = .5),
-            plot.subtitle = element_text(color = "white", size = 15, hjust = .5),
             axis.line=element_blank(),
             axis.text.x=element_blank(),
             axis.text.y=element_blank(),
             axis.ticks=element_blank(),
             axis.title.x=element_blank(),
             axis.title.y=element_blank(),
-            legend.position="none",
-            panel.background=element_rect(fill = "#4A5D6D", color = "#4A5D6D"),
             panel.border=element_blank(),
             panel.grid.major=element_blank(),
-            panel.grid.minor=element_blank(),
-            plot.background=element_rect(fill = "#4A5D6D", color = "#4A5D6D"))
+            panel.grid.minor=element_blank())
     
     
   })
@@ -196,26 +214,11 @@ server <- function(input, output) {
     vets %>%
     filter(rural_urban %in% input$checkbox_tru) %>%
     ggplot(aes_string(x = paste0("reorder(state, -", input$select_charac, ")"), 
-                      y = input$select_charac, fill = "region", color = "rural_urban")) +
+                      y = input$select_charac, fill = "region")) +
     geom_bar(stat = "identity") +
     scale_fill_manual(values = cols, name = "Region") +
-    scale_color_manual(values = cols2, name = "Rural vs. Urban") +
-    theme_light() +
-    theme(plot.title = element_text(color = "white", size = 24, face = "bold", hjust = .5),
-          axis.title.x = element_text(color = "white", size = 15, face = "bold"),
-          axis.title.y = element_text(color = "white", size = 15, face = "bold"),
-          axis.text.x = element_text(color = "white", size = 9, angle = 70, hjust = 1),
-          axis.text.y = element_text(color = "white"),
-          axis.ticks = element_blank(),
-          legend.title = element_text(color = "white", size = 11, face = "bold"),
-          panel.background = element_rect(fill = "#4A5D6D", color = "#EBF5FB"),
-          panel.border=element_blank(),
-          panel.grid.major=element_blank(),
-          panel.grid.minor=element_blank(),
-          plot.background=element_rect(fill = "#4A5D6D", color = "#4A5D6D"),
-          legend.background = element_rect(fill="#4A5D6D", 
-                                           size=0.5, linetype="solid"),
-          legend.text = element_text(color = "white")) +
+    theme_custom() +
+    theme(axis.text.x = element_text(color = "white", size = 9, angle = 70, hjust = 1)) +
     labs(title = paste0(paste0(input$checkbox_tru, collapse = " and "), " Veterans Living ", 
       str_to_title(str_replace_all(input$select_charac, "_", " "))),
       y = paste0("Percent ", str_replace_all(input$select_charac, "_", " ")), x = "State")
@@ -238,7 +241,7 @@ server <- function(input, output) {
     else if (input$select_charac == "uninsured"){
       paste("This dataset includes information on veterans with and without health insurance. 
             According to Veterans in Rural America: 2011–2015 American Community Survey Reports, 
-            Not all veterans can use the VA healthcare system.
+            not all veterans can use the VA healthcare system.
             Eligibility for using the VA healthcare system is based on veteran status, 
             service-connected disability status, income level, and other factors.")
     }
@@ -369,6 +372,24 @@ server <- function(input, output) {
   
   output$state_rural_text2 <- renderText({
     paste0(" of ", input$select_state, "'s veterans live in rural areas.")
+  })
+  
+  output$search_results <- DT::renderDataTable({
+    table <- vets %>%
+      filter(rural_urban == input$search_ru, get(input$search_charac) > input$search_percent) %>%
+      select(state, total, in_poverty, unemployed, uninsured, with_disability) %>%
+      arrange(desc(get(input$search_charac)))
+    
+    table <- subset(table, select=c(1:2, get(input$search_charac), 3:6))
+    
+    table <- table %>%
+      subset(select=which(!duplicated(names(.)))) 
+    
+    table <- table %>%
+      rename("State" = state, "Veteran Population" = total, "% Uninsured" = uninsured, 
+             "% in Poverty" = in_poverty, "% Unemployed" = unemployed, 
+             "% With VA Disability" = with_disability)
+    table
   })
   
 }
