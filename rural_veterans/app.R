@@ -466,7 +466,7 @@ server <- function(input, output) {
   # Search description
   react_text <- eventReactive(input$go_button, {
       paste0("Showing states where over ", input$search_percent, "% of ", 
-             str_to_lower(str_replace(input$search_ru, "Total", "All")), " veterans are ",
+             str_to_lower(str_replace(input$search_ru, "Total", "All")), " veterans live ",
              str_replace_all(input$search_charac, "_", " "))
     })
   
