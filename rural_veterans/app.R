@@ -23,49 +23,82 @@ cols2 <- c("Rural" = "white", "Urban" = "black")
 us_map <- map_data("state")
 
 ui <- fluidPage(theme = shinytheme("superhero"),
-                navbarPage(title = "Get to Know America's Rural Veterans",
-                           tabPanel("US Map",
+                navbarPage(title = "America's Rural Veterans",
+                           tabPanel("National",
                                     sidebarLayout(
                                       sidebarPanel(
+                                        h2("Where are America's rural veterans?"),
+                                        br(),
+                                        h4("Title text whoop"),
+                                        br(),
                                         checkboxGroupInput(inputId = "checkbox_tru",
-                                                  label   = "Select which veterans to display",
+                                                  label   = "Select which veterans to display:",
                                                   choices = list("Rural", "Urban"),
-                                                  selected = c("Rural", "Urban"),
+                                                  selected = c("Rural"),
                                                   inline = TRUE),
-                                        h3("Explore state data"),
-                                        selectInput(inputId = "select_state",
-                                                    label = "Choose a state to explore",
-                                                    choices = state.name),
+                                        br(),
+                                        br(),
                                         radioButtons(inputId = "select_charac",
-                                                    label = "Select characteristic of interest",
+                                                    label = "Select characteristic of interest:",
                                                     choices = list("Poverty" = "in_poverty", 
                                                                    "Unemployment" = "unemployed",
                                                                    "Insurance" = "uninsured",
                                                                    "Disability" = "with_disability"
                                                                    )),
+                                        br(),
                                         h4("Notes"),
-                                        textOutput(outputId = "text"),
-                                        tags$head(tags$style("#text{color: white;
+                                        textOutput(outputId = "note_text"),
+                                        tags$head(tags$style("#note_text{color: white;
                                                               font-size: 12px;
                                                               font-style: italic;
                                                               }")
                                         )
                                       ),
                                      mainPanel(
-                                       plotOutput(outputId = "usvets_map"),
-                                       plotOutput(outputId = "poverty_plot"))
+                                       fluidRow(
+                                         plotOutput(outputId = "usvets_map", width = "925px", 
+                                                  height = "550px")),
+                                       br(),
+                                       fluidRow(
+                                       plotOutput(outputId = "poverty_plot", width = "800px",
+                                                  height = "400px"), align = "center"),
+                                       br()
                                     )
-                                    ),
-                           tabPanel("Background Information",
+                                    )),
+                           tabPanel("Regional",
+                                    sidebarLayout(
+                                      sidebarPanel(
+                                        h3("Explore state data"),
+                                        selectInput(inputId = "select_state",
+                                                    label = "Choose a state to explore",
+                                                    choices = state.name),
+                                      ),
+                                      mainPanel()
+                                    )
+                           ),
+                           tabPanel("State",
+                                    sidebarLayout(
+                                      sidebarPanel(
+                                        h3("Explore state data"),
+                                        selectInput(inputId = "select_state",
+                                                    label = "Choose a state to explore",
+                                                    choices = state.name),
+                                      ),
+                                      mainPanel()
+                                    )
+                           ),
+                           tabPanel("Background",
                                     column(width = 2),
                                     column(width = 8,
                                            h1("Title 1"),
                                            h3("subheading 1"),
-                                           p("Some text about vets!"),
+                                           p("Some text about vets!", 
+                                             style = "font-family: 'times'; font-si16pt"),
                                            h3("subheading 2"),
                                            p("more text and helpful info")
-                                    )
-                                    )))
+                                    ))
+                           
+                           ))
 
 
 server <- function(input, output) {
@@ -81,10 +114,25 @@ server <- function(input, output) {
       geom_polygon(data = us_map, aes(x=long, y=lat, group=group),
                    color="#85C1E9", fill = "#EBF5FB") +
       geom_point(data = x_map, aes(x = x, y = y, size = total, color = rural_urban, alpha = .7)) +
-      scale_size_continuous(range=c(1,15)) +
+      scale_size_continuous(range=c(1,30)) +
       scale_color_manual(values = cols) +
       coord_map() +
-      theme(legend.position = "none")
+      labs(title = paste0(paste0(input$checkbox_tru, collapse = " and "), 
+                          " Veterans in the US, by State"), subtitle = "2011-2015") +
+      theme(plot.title = element_text(color = "white", size = 22, face = "bold", hjust = .5),
+            plot.subtitle = element_text(color = "white", size = 15, hjust = .5),
+            axis.line=element_blank(),
+            axis.text.x=element_blank(),
+            axis.text.y=element_blank(),
+            axis.ticks=element_blank(),
+            axis.title.x=element_blank(),
+            axis.title.y=element_blank(),
+            legend.position="none",
+            panel.background=element_rect(fill = "#4A5D6D", color = "#4A5D6D"),
+            panel.border=element_blank(),
+            panel.grid.major=element_blank(),
+            panel.grid.minor=element_blank(),
+            plot.background=element_rect(fill = "#4A5D6D", color = "#4A5D6D"))
     
     
   })
@@ -97,23 +145,28 @@ server <- function(input, output) {
     scale_fill_manual(values = cols, name = "Region") +
     scale_color_manual(values = cols2, name = "Rural vs. Urban") +
     theme_light() +
-    theme(plot.title = element_text(color = "#1A5276", size = 18, face = "bold"),
-          axis.title.x = element_text(color = "#1A5276", size = 11, face = "bold"),
-          axis.title.y = element_text(color = "#1A5276", size = 11, face = "bold"),
-          axis.text.x = element_text(color = "gray45", size = 7, angle = 70, hjust = 1),
+    theme(plot.title = element_text(color = "white", size = 24, face = "bold", hjust = .5),
+          axis.title.x = element_text(color = "white", size = 15, face = "bold"),
+          axis.title.y = element_text(color = "white", size = 15, face = "bold"),
+          axis.text.x = element_text(color = "white", size = 9, angle = 70, hjust = 1),
+          axis.text.y = element_text(color = "white"),
           axis.ticks = element_blank(),
-          legend.title = element_text(color = "#1A5276", size = 11, face = "bold"),
-          plot.tag.position = c(0.9, 0.85),
-          plot.tag = element_text(size = 7, hjust = .6))+
+          legend.title = element_text(color = "white", size = 11, face = "bold"),
+          panel.background = element_rect(fill = "#4A5D6D", color = "#EBF5FB"),
+          panel.border=element_blank(),
+          panel.grid.major=element_blank(),
+          panel.grid.minor=element_blank(),
+          plot.background=element_rect(fill = "#4A5D6D", color = "#4A5D6D"),
+          legend.background = element_rect(fill="#4A5D6D", 
+                                           size=0.5, linetype="solid"),
+          legend.text = element_text(color = "white")) +
     labs(title = paste0(paste0(input$checkbox_tru, collapse = " and "), " Veterans Living ", 
       str_to_title(str_replace_all(input$select_charac, "_", " "))),
-      y = paste0("Percent ", str_replace_all(input$select_charac, "_", " ")), x = "State",
-      tag = "Bars outlined in white represent rural veterans and bars outlined in black
-      represent urban veterans")
+      y = paste0("Percent ", str_replace_all(input$select_charac, "_", " ")), x = "State")
   })
   
-  output$text <- renderText({
-    if ("in_poverty" %in% input$select_charac){
+  output$note_text <- renderText({
+    if (input$select_charac == "in_poverty"){
       paste("For some persons, such as unrelated individuals under age 15, poverty status is not 
             defined. Since Census Bureau surveys typically ask income questions to persons age 
             15 or older, if a child under age 15 is not related by birth, marriage, or adoption 
@@ -122,8 +175,26 @@ server <- function(input, output) {
             Survey, poverty status is also undefined for people living in college dormitories 
             and in institutional group quarters.")
     }
+    else if (input$select_charac == "unemployed"){
+      paste("This dataset includes employment information for working age veterans. Working 
+            age is defined here as the population 18 to 64 years old.")
+    }
+    else if (input$select_charac == "uninsured"){
+      paste("This dataset includes information on veterans with and without health insurance. 
+            According to Veterans in Rural America: 2011–2015 American Community Survey Reports, 
+            Not all veterans can use the VA healthcare system.
+            Eligibility for using the VA healthcare system is based on veteran status, 
+            service-connected disability status, income level, and other factors.")
+    }
+    else if (input$select_charac == "with_disability") {
+      paste("This dataset considers veterans which have a VA service-connected disability
+      rating, meaning that the VA detemined the veteran's injury or illness was incurred 
+      or aggravated during active military service. When making a determination, the VA 
+            considers the places, types, and circumstances of military service as 
+            documented in veteran service records."
+      )
+    }
   })
-
 }
 
 
