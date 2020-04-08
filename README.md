@@ -53,15 +53,15 @@ This app allows viewers to explore characteristics of rural and urban veterans i
 
 Viewers can opt to peruse data at the federal level.
 
-INSERT SCREENSHOT OF FEDERAL TAB HERE
+![](federal_tab.png)
 
 They can also choose to view key statistics and comparisons of disability, insurance, and poverty for each of the 50 states- this exploration allows viewers to contrast the percentage of veterans in each state who are rural residents with the percentages of disabled, uninsured, and impoverished veterans who are rural residents.
 
-INSERT SCREENSHOT OF STATE TAB HERE
+![](state_tab.png)
 
 A final option allows viewers to search for states which exceed certain percentages of veterans being disabled, uninsured, unemployed, or impoverished. For example, you could search for states in which over 20% of rural veterans are living with a service-connected disability.
 
-INSERT SCREENSHOT OF SEARCH TAB HERE
+![](search_tab.png)
 
 Finally, the app's background section also provides context for why rural/urban veteran health analysis is important, and particularly at the state level.
 
