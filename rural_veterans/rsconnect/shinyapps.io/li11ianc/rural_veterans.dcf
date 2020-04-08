@@ -5,9 +5,8 @@ account: li11ianc
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2074596
-bundleId: 2985324
+bundleId: 2986114
 url: https://li11ianc.shinyapps.io/rural_veterans/
-when: 1586328209.58684
+when: 1586343394.2311
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: data/~$rural_vets.xlsx|data/rural_vets_clean.xlsx|data/rural_vets.xlsx
