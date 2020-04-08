@@ -19,6 +19,7 @@ vets <- read_csv("data/rural_vets_complete_clean.csv")
 cols <- c("Rural" = "#F4200B", "Urban" = "#2C0A90", "Total" = "#F4D03F",
           "West" = "#E67E22", "Midwest" = "#F1C40F", "Northeast" = "#C0392B", 
           "South" = "#2980B9")
+cols2 <- c("Rural" = "white", "Urban" = "black")
 us_map <- map_data("state")
 
 ui <- fluidPage(theme = shinytheme("superhero"),
@@ -28,7 +29,7 @@ ui <- fluidPage(theme = shinytheme("superhero"),
                                       sidebarPanel(
                                         checkboxGroupInput(inputId = "checkbox_tru",
                                                   label   = "Select which veterans to display",
-                                                  choices = list("Rural", "Urban", "Total"),
+                                                  choices = list("Rural", "Urban"),
                                                   selected = c("Rural", "Urban"),
                                                   inline = TRUE),
                                         h3("Explore state data"),
@@ -40,7 +41,7 @@ ui <- fluidPage(theme = shinytheme("superhero"),
                                                     choices = list("Poverty" = "in_poverty", 
                                                                    "Unemployment" = "unemployed",
                                                                    "Insurance" = "uninsured",
-                                                                   "Disability" = "va_disability"
+                                                                   "Disability" = "with_disability"
                                                                    )),
                                         h4("Notes"),
                                         textOutput(outputId = "text"),
@@ -89,22 +90,30 @@ server <- function(input, output) {
   })
   output$poverty_plot <- renderPlot({
     vets %>%
-    filter(rural_urban == "Rural") %>%
-    ggplot(aes_string(x = paste0("reorder(state, -", input$select_charac, ")"), y = input$select_charac, fill = "region")) +
+    filter(rural_urban %in% input$checkbox_tru) %>%
+    ggplot(aes_string(x = paste0("reorder(state, -", input$select_charac, ")"), 
+                      y = input$select_charac, fill = "region", color = "rural_urban")) +
     geom_bar(stat = "identity") +
     scale_fill_manual(values = cols, name = "Region") +
+    scale_color_manual(values = cols2, name = "Rural vs. Urban") +
     theme_light() +
     theme(plot.title = element_text(color = "#1A5276", size = 18, face = "bold"),
           axis.title.x = element_text(color = "#1A5276", size = 11, face = "bold"),
           axis.title.y = element_text(color = "#1A5276", size = 11, face = "bold"),
           axis.text.x = element_text(color = "gray45", size = 7, angle = 70, hjust = 1),
           axis.ticks = element_blank(),
-          legend.title = element_text(color = "#1A5276", size = 11, face = "bold"))+
-    labs(title = "Rural Veterans Living in Poverty", y = "Percent in poverty", x = "State")
+          legend.title = element_text(color = "#1A5276", size = 11, face = "bold"),
+          plot.tag.position = c(0.9, 0.85),
+          plot.tag = element_text(size = 7, hjust = .6))+
+    labs(title = paste0(paste0(input$checkbox_tru, collapse = " and "), " Veterans Living ", 
+      str_to_title(str_replace_all(input$select_charac, "_", " "))),
+      y = paste0("Percent ", str_replace_all(input$select_charac, "_", " ")), x = "State",
+      tag = "Bars outlined in white represent rural veterans and bars outlined in black
+      represent urban veterans")
   })
   
   output$text <- renderText({
-    if ("Poverty" %in% input$select_charac){
+    if ("in_poverty" %in% input$select_charac){
       paste("For some persons, such as unrelated individuals under age 15, poverty status is not 
             defined. Since Census Bureau surveys typically ask income questions to persons age 
             15 or older, if a child under age 15 is not related by birth, marriage, or adoption 

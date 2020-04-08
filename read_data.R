@@ -16,7 +16,8 @@ poverty_error <- readxl::read_excel(path = "rural_veterans/data/rural_vets_clean
                                     sheet = "Table 2 Margin of Error")
 
 
-# Table 3. Employment Characteristics for Working-Age Veterans, by State and Urban/Rural Residence
+# Table 3. Employment Characteristics for Working-Age Veterans, by State and Urban/Rural 
+# Residence
 employ <- readxl::read_excel(path = "rural_veterans/data/rural_vets_clean.xlsx", 
                              sheet = "Table 3 Percent")
 employ_error <- readxl::read_excel(path = "rural_veterans/data/rural_vets_clean.xlsx", 
@@ -38,8 +39,8 @@ charac <- charac[1:155,] %>%
          age_45_54 = x45_to_54_years, age_55_64 = x55_to_64_years, age_65_74 = x65_to_74_years,
          age_75_plus = x75_years_and_older, gulf_war2 = gulf_war_september_2001_or_later_1,
          gulf_war1 = gulf_war_august_1990_to_august_2001, 
-         va_disability = has_a_va_service_connected_disability_rating,
-         no_va_disability = no_va_service_connected_disability_rating,
+         with_disability = has_a_va_service_connected_disability_rating,
+         without_disability = no_va_service_connected_disability_rating,
          county_less_than_half_rural = lives_in_county_that_is_less_than_50_percent_rural2,
          county_over_half_rural = lives_in_county_that_is_50_99_9_percent_rural,
          county_all_rural = lives_in_county_that_is_100_percent_rural) %>%
@@ -84,13 +85,3 @@ vets <- inner_join(vets, center_coords, by = "state") %>%
   ))
 
 write_csv(vets, "rural_veterans/data/rural_vets_complete_clean.csv")
-
-
-# Reorder data + Add a new column with tooltip text
-# RIGHT NOW NOT USING THIS BE SURE TO REMOVE BEFORE DUE
-vets_map <- vets_map %>%
-  mutate(state = factor(state, unique(state))) %>%
-  mutate(caption = paste(
-    state, "\n", 
-    "Population: ", total, sep="")
-  )
