@@ -119,3 +119,42 @@ vets %>%
       legend.title = element_text(color = "#1A5276", size = 11, face = "bold"))+
   labs(title = "Rural Veterans Living in Poverty", y = "Percent in poverty", x = "State")
 ```
+
+```{r}
+state_input <- "Alaska"
+
+x_state <- vets %>%
+  filter(state == state_input)
+
+percent_disabled <- x_state[which(x_state$rural_urban == "Rural"),]$total * x_state[which(x_state$rural_urban == "Rural"),]$with_disability / 100 / (x_state[which(x_state$rural_urban == "Total"),]$total * x_state[which(x_state$rural_urban == "Total"),]$with_disability / 100) * 100
+
+paste0(round(percent_disabled, 2), "% of ", state_input, "'s diabled veterans live in rural areas")
+
+x_state %>%
+  filter(rural_urban != "Total") %>%
+  ggplot(aes(x = rural_urban, y = with_disability, fill = rural_urban)) +
+    scale_fill_manual(values = cols) +
+    geom_bar(stat = "identity")
+
+x_state %>%
+  filter(rural_urban != "Total") %>%
+  ggplot(aes(x = rural_urban, y = uninsured, fill = rural_urban)) +
+    scale_fill_manual(values = cols) +
+    geom_bar(stat = "identity")
+
+percent_uninsured <- x_state[which(x_state$rural_urban == "Rural"),]$total * x_state[which(x_state$rural_urban == "Rural"),]$uninsured / 100 / (x_state[which(x_state$rural_urban == "Total"),]$total * x_state[which(x_state$rural_urban == "Total"),]$uninsured / 100) * 100
+
+paste0(round(percent_uninsured, 2), "% of ", state_input, "'s uninsured veterans live in rural areas")
+
+x_state %>%
+  filter(rural_urban != "Total") %>%
+  ggplot(aes(x = rural_urban, y = in_poverty, fill = rural_urban)) +
+    scale_fill_manual(values = cols) +
+    geom_bar(stat = "identity") +
+  scale_y_continuous(limits= c(0, NA), expand = c(0,.2))
+
+percent_poverty <- x_state[which(x_state$rural_urban == "Rural"),]$total * x_state[which(x_state$rural_urban == "Rural"),]$in_poverty / 100 / (x_state[which(x_state$rural_urban == "Total"),]$total * x_state[which(x_state$rural_urban == "Total"),]$in_poverty / 100) * 100
+
+paste0(round(percent_poverty, 2), "% of ", state_input, "'s impoverished veterans live in rural areas ")
+```
+
