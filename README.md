@@ -1,4 +1,4 @@
-# STA 323 :: Exam 2
+# America's Rural Veterans: Where are they and what health challenges do they face?
 
 ## Introduction
 
@@ -42,143 +42,29 @@ KELLY ANN HOLDER
 </b>
 </br></br>
 
-To read the full brief and get some inspiration for this Exam click 
+To read the full brief click 
 [here](https://www.census.gov/content/dam/Census/library/publications/2017/acs/acs-36.pdf).
 
-## Data
+## Shiny App
 
-<b>Data and Exam 2 overview [video](https://warpwire.duke.edu/w/-44DAA/)</b>
+To view the shiny app associated with this repository, click [here]( https://li11ianc.shinyapps.io/rural_veterans/).
 
-In your repository is an Excel file `rural_veterans/data/rural_vets.xlsx`. 
-There are three tables in this file (one in each tab). Footnotes are available 
-at the bottom of the tables.
+This app allows viewers to explore characteristics of rural and urban veterans in the United States, including poverty level, employment, health insurance, and service-connected disability.
 
-Table 1. Selected Characteristics of Veterans by State and Urban/Rural Residence
+Viewers can opt to peruse data at the federal level.
 
-Table 2. Poverty Statistics for Veterans, by State and Urban/Rural Residence
+INSERT SCREENSHOT OF FEDERAL TAB HERE
 
-Table 3. Employment Characteristics for Working-Age Veterans, by State and 
-		 Urban/Rural Residence
+They can also choose to view key statistics and comparisons of disability, insurance, and poverty for each of the 50 states- this exploration allows viewers to contrast the percentage of veterans in each state who are rural residents with the percentages of disabled, uninsured, and impoverished veterans who are rural residents.
 
-The data is not in the nicest form for reading it directly into R. However, 
-you may manipulate the Excel file (or change to another file type) before you 
-read it into R. Save your modified file as `rural_vets_clean` in
-`rural_veterans/data/`. There are some functions (`readxl::read_xlsx()`) that 
-will read in Excel files, but you will still have some data cleaning to 
-then do in R.
-   
-## Tasks
+INSERT SCREENSHOT OF STATE TAB HERE
 
-You may use any R package. Include code to load your package with 
-`library(package_name)`. If I do not have the package, I will install it.
+A final option allows viewers to search for states which exceed certain percentages of veterans being disabled, uninsured, unemployed, or impoverished. For example, you could search for states in which over 20% of rural veterans are living with a service-connected disability.
 
-#### Task 1
+INSERT SCREENSHOT OF SEARCH TAB HERE
 
-Use the provided data (you may select of subset of the data - not all three
-tables need to be used) to create a Shiny app or dashboard that allows users
-to interact, explore, and better understand the data. You may want to 
-work with the [Navigation Bar Page](https://shiny.rstudio.com/gallery/navbar-example.html)
-layout or [shinydashboard](https://rstudio.github.io/shinydashboard/). Both 
-options will neatly structure your UI; however, these are not the only options.
+Finally, the app's background section also provides context for why rural/urban veteran health analysis is important, and particularly at the state level.
 
-Required app features:
-
-1. An information section - what is the data, where did it come from, what is
-   the purpose. Including something akin to the Introduction above is sufficient.
-   Make it clear to users what data they are exploring.
-
-2. It should have at least three input/control widgets.
-
-3. It should have at least three reactive output displays. 
-
-4. It should incorporate at least one derivative shiny package such as 
-   `shinythemes` or `shinyalert`. There are many more, these are just two 
-   examples.
-
-5. It should be well organized and aesthetically pleasing.
-
-Satisfying these requirements will earn you at least half the points allocated
-for Task 1. The remaining points will be awarded based on your creativity,
-effort level, and how well your app functions (think about using action buttons
-and/or reactive expressions for efficiency and a pleasant user experience). 
-
-So, be creative and feel free to incorporate other data including spatial data. 
-Check out Shiny's [gallery](https://shiny.rstudio.com/gallery/) for inspiration.
-
-#### Task 2
-
-Publish your app on https://www.shinyapps.io/.
-
-#### Task 3
-
-Modify this README.
-
-1. Change the title from `STA 323 :: Exam 2` to something
-   more meaningful as it relates to your app.
-
-2. Remove all other text but the introduction and references sections and their
-   respective text.
-
-3. Add a link to your app that you published in Task 2.
-
-4. Add any other relevant information to this README that someone looking at
-   your repo may be interested in knowing. This can be text or images.
-
-## Essential details
-
-#### Deadline and submission
-
-**The deadline to submit Exam 2 is 11:59pm EST on Wednesday, April 8.** 
-Only the code in the master branch will be graded.
-
-#### Rules
-
-- This is an individual assignment.
-
-- Everything in your repository is for your eyes only except for the 
-  instructor and TAs.
-
-- You may not communicate anything about this exam to anyone.
-
-- You may use any online, book, and note resources. As always, you must cite 
-  any code you use as inspiration.
-
-- Questions should only be about understanding the data or the exam's 
-  instructions.
-
-#### git / GitHub
-
-You will only have one branch to start with in your repository - master. 
-You may create other branches as needed, but only your work in the master 
-branch will be graded. Be sure to push your work before the deadline.
-
-This repository does not contain an RStudio project. Hence, you will need to
-use git from the command line as opposed to the RStudio GUI.
-
-#### Academic integrity
-
-This is an individual assignment. See the Rules section above.
-As a reminder, any code you use directly or as inspiration must be cited.
-
-To uphold the Duke Community Standard:
-
-- I will not lie, cheat, or steal in my academic endeavors;
-- I will conduct myself honorably in all my endeavors; and
-- I will act if the Standard is compromised.
-
-#### Grading
-
-A portion of the total points for each task will be allocated towards
-efficiency and code style.
-
-**Topic**|**Points**
----------|----------:|
-Task 1   |  46
-Task 2   |   6
-Task 3   |   8
-**Total**|**60**
-
-*Apps that fail to run after minimal intervention will receive a 0*.
 
 ## References
 

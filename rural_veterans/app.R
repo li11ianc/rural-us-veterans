@@ -3,6 +3,7 @@ library(tidyverse)
 library(maps)
 library(shinythemes)
 library(mapproj)
+library(shinyalert)
 
 theme_custom <- function() {
   theme_light() +
@@ -192,6 +193,14 @@ ui <- fluidPage(theme = shinytheme("superhero"),
 
 
 server <- function(input, output) {
+  
+  observeEvent(input$search_percent, {
+    if (!(as.numeric(input$search_percent)) |  input$search_percent >= 0 | input$search_percent <= 100) {
+      shinyalert(title = "Oh no!", 
+                 text  = "Invalid number entry.",
+                 type  = "error")
+    }})
+  
   output$usvets_map <- renderPlot({
     
     x_map <- vets %>%
