@@ -67,7 +67,7 @@ ui <- fluidPage(theme = shinytheme("superhero"),
                                      mainPanel(
                                        fluidRow(
                                          plotOutput(outputId = "usvets_map", width = "925px", 
-                                                  height = "504px")),
+                                                  height = "504.6px")),
                                        br(),
                                        fluidRow(
                                        plotOutput(outputId = "poverty_plot", width = "800px",
