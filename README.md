@@ -76,6 +76,10 @@ http://www.sthda.com/english/wiki/reordering-data-frame-columns-in-r#reorder-col
 
 https://stackoverflow.com/questions/24142942/how-to-remove-duplicated-column-names-in-r
 
+https://stackoverflow.com/questions/31549782/shiny-how-to-change-a-background-colour-of-a-column
+
+https://shiny.rstudio.com/articles/css.html
+
 ### Data
 
 - Bureau, U. (2018). Veterans in Rural America: 2011–2015. The United States 

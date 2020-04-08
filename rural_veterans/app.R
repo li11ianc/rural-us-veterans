@@ -44,7 +44,7 @@ ui <- fluidPage(theme = shinytheme("superhero"),
                                                   selected = "Rural",
                                                   inline = TRUE),
                                         br(),
-                                        br(),
+                                        hr(),
                                         h2("What challenges do these veterans face?"),
                                         h4("Explore regional and state level differences"),
                                         radioButtons(inputId = "select_charac",
@@ -56,6 +56,7 @@ ui <- fluidPage(theme = shinytheme("superhero"),
                                                                    ),
                                                     select = "uninsured"),
                                         br(),
+                                        hr(),
                                         h4("Notes"),
                                         textOutput(outputId = "note_text"),
                                         tags$head(tags$style("#note_text{color: white;
@@ -137,9 +138,11 @@ ui <- fluidPage(theme = shinytheme("superhero"),
                                                     br(),
                                                     h4("Find states where over")),
                                              column(width = 2,
-                                             textInput(inputId = "search_percent",
-                                                       label = "Enter a number between 0 and 100",
-                                                       value = 6)),
+                                             sliderInput(inputId = "search_percent",
+                                                         label = "Select percent",
+                                                       min = 0, max = 100, value = 1),
+                                             style = "background-color:white; color:black"
+                                             ),
                                              column(width = 1,
                                                     br(),
                                              h4("% of ")),
@@ -158,11 +161,14 @@ ui <- fluidPage(theme = shinytheme("superhero"),
                                                          choices = list("without health insurance" = "uninsured",
                                                                         "living with a service-connected disability" = "with_disability",
                                                                         "in poverty" = "in_poverty", 
-                                                                        "unemployed" = "unemployed"))),
+                                                                        "unemployed" = "unemployed")))),
                                              fluidRow(
-                                             DT::dataTableOutput(outputId = "search_results"),
-                                             tags$head(tags$style("#search_results{color: black}")
-                                             )))),
+                                               h3("Search results"),
+                                               hr(),
+                                               column(width = 12,
+                                                      DT::dataTableOutput(outputId = "search_results"),
+                                                      style = "background-color:white; color:black"
+                                                      ))),
                            tabPanel("Background",
                                     column(width = 2),
                                     column(width = 8,
@@ -193,13 +199,6 @@ ui <- fluidPage(theme = shinytheme("superhero"),
 
 
 server <- function(input, output) {
-  
-  observeEvent(input$search_percent, {
-    if (!(as.numeric(input$search_percent)) |  input$search_percent >= 0 | input$search_percent <= 100) {
-      shinyalert(title = "Oh no!", 
-                 text  = "Invalid number entry.",
-                 type  = "error")
-    }})
   
   output$usvets_map <- renderPlot({
     
