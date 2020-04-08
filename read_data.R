@@ -58,5 +58,39 @@ total <- full_join(poverty, employ, by=c("state","rural_urban", "format"))
 
 vets <- full_join(total, charac, by=c("state","rural_urban", "format"))
 
+center_coords <- lapply(state.center, unlist) %>%
+  bind_rows()
+
+center_coords$state <- sapply(state.name, paste0)
+
+vets <- inner_join(vets, center_coords, by = "state") %>%
+  rename(center_lat = x, center_long = y) %>%
+  # Census Bureau-designated regions
+  mutate(region = case_when(
+    state %in% c("Connecticut", "Maine", "Massachusetts", 
+                 "New Hampshire", "Rhode Island", "Vermont",
+                 "New Jersey", "New York", "Pennsylvania") ~ "Northeast",
+    state %in% c("Illinois", "Indiana", "Michigan", "Ohio",
+                 "Wisconsin", "Iowa", "Kansas", "Minnesota",
+                 "Missouri", "Nebraska", "North Dakota", "South Dakota") ~ "Midwest",
+    state %in% c("Delaware", "Florida", "Georgia", "Maryland",
+                 "North Carolina", "South Carolina", "Virginia", 
+                 "District of Columbia", "West Virginia", "Alabama", 
+                 "Kentucky", "Mississippi", "Tennessee", "Arkansas", 
+                 "Louisiana", "Oklahoma", "Texas") ~ "South",
+    state %in% c("Arizona", "Colorado", "Idaho", "Montana",
+                 "Nevada", "New Mexico", "Utah", "Wyoming", "Alaska",
+                 "California", "Hawaii", "Oregon", "Washington") ~ "West"
+  ))
+
 write_csv(vets, "rural_veterans/data/rural_vets_complete_clean.csv")
 
+
+# Reorder data + Add a new column with tooltip text
+# RIGHT NOW NOT USING THIS BE SURE TO REMOVE BEFORE DUE
+vets_map <- vets_map %>%
+  mutate(state = factor(state, unique(state))) %>%
+  mutate(caption = paste(
+    state, "\n", 
+    "Population: ", total, sep="")
+  )

@@ -15,7 +15,7 @@ library(tidyverse)
 library(sf)
 library(ggiraph)
 library(maps)
-library(viridis)
+library(plotly)
 ```
 library(patchwork)
 library(RColorBrewer)
@@ -76,14 +76,46 @@ p
 us_map <- map_data("state")
 
 # create visualization
-cols <- c("Rural" = "#F4200B", "Urban" = "#F4D03F", "Total" = "#8E44AD")
+cols <- c("Rural" = "#F4200B", "Urban" = "#2C0A90", "Total" = "#F4D03F",
+          "West" = "#E67E22", "Midwest" = "#F1C40F", "Northeast" = "#C0392B", 
+          "South" = "#2980B9")
+```
 
-ggplot() + 
+```{r}
+# Reorder data + Add a new column with tooltip text
+vets_map <- vets_map %>%
+  mutate(rural_urban = fct_relevel(rural_urban, c("Total", "Urban", "Rural"))) %>%
+  mutate(state = factor(state, unique(state))) %>%
+  mutate(caption = paste(
+    state, "\n", 
+    "Population: ", total, sep="")
+  )
+
+p <- ggplot() + 
   geom_polygon(data = us_map, aes(x=long, y=lat, group=group),
                 color="#85C1E9", fill = "#EBF5FB") +
-  geom_point(data = urban_map, aes(x = x, y = y, size = total, color = rural_urban, alpha = .7)) +
-  geom_point(data = rural_map, aes(x = x, y = y, size = total, color = rural_urban, alpha = .7)) +
+  geom_point(data = vets_map, aes(x = x, y = y, size = total, color = rural_urban, alpha = .7,
+                                   text = caption)) +
   scale_size_continuous(range=c(1,15)) +
   scale_color_manual(values = cols) +
   coord_map()
+
+p <- ggplotly(p, tootltip = "text")
+p
+```
+
+```{r}
+vets %>%
+  filter(rural_urban == "Rural") %>%
+  ggplot(aes_string(x = "reorder(state, -in_poverty)", y = "in_poverty", fill = "region")) +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = cols, name = "Region") +
+  theme_light() +
+  theme(plot.title = element_text(color = "#1A5276", size = 18, face = "bold"),
+      axis.title.x = element_text(color = "#1A5276", size = 11, face = "bold"),
+      axis.title.y = element_text(color = "#1A5276", size = 11, face = "bold"),
+      axis.text.x = element_text(color = "gray45", size = 7, angle = 70, hjust = 1),
+      axis.ticks = element_blank(),
+      legend.title = element_text(color = "#1A5276", size = 11, face = "bold"))+
+  labs(title = "Rural Veterans Living in Poverty", y = "Percent in poverty", x = "State")
 ```
